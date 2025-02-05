@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDataContext } from "../context/data_context";
 import { Link } from "react-router-dom";
-import { BarChart, Loading, VerticalChart, Modal } from ".";
+import { BarChart, Loading, VerticalChart, Modal } from "../components";
 import moment from "moment";
 
 const Dashboard = () => {

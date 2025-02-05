@@ -45,7 +45,8 @@ const AddContract = () => {
 
   const representativeList = [];
   const contractCodesList = ["Select"];
-
+  console.log(representativeList);
+  console.log(contractCodesList);
   if (adminList) {
     adminList.map(
       (item) => (

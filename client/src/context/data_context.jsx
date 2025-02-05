@@ -163,7 +163,9 @@ export const initialState = {
   addComment: "",
   addSale: "",
   addBusines: "",
-  addCode: "",
+  addCode: {
+    name: "",
+  },
   serviceChemicals: {
     label: "",
     value: "",
@@ -485,14 +487,12 @@ export const DataProvider = ({ children }) => {
         type: EDIT_SERVICE,
         payload: { frequency, business, treatmentLocation, _id, area },
       });
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const sameDetails = () => {
     dispatch({ type: SAME_DETAILS });
   };
-
-
 
   const createContract = async (last) => {
     try {
@@ -628,7 +628,7 @@ export const DataProvider = ({ children }) => {
         edit,
         cardId,
       } = state;
-      const serv = value.split(",").map(ser => ser.trim());
+      const serv = value.split(",").map((ser) => ser.trim());
       if (ratrid === "No" && serv.includes("Rat Rid") && serv.length > 5) {
         return dispatch({ type: CARD_FAIL });
       }
@@ -726,7 +726,7 @@ export const DataProvider = ({ children }) => {
   //     console.log(error);
   //   }
   // };
- 
+
   const generateReport = async (id) => {
     dispatch({ type: LOADING });
     try {
@@ -838,7 +838,10 @@ export const DataProvider = ({ children }) => {
     dispatch({ type: LOADING }); // Uncomment if you handle loading in your reducer
     const { feedbackEmails } = state;
     try {
-      const res = await axios.put("https://cqr1.herokuapp.com/api/feedback/sendMails", feedbackEmails);
+      const res = await axios.put(
+        "https://cqr1.herokuapp.com/api/feedback/sendMails",
+        feedbackEmails
+      );
       dispatch({ type: SCHEDULE_MAIL, payload: res.data });
     } catch (error) {
       // Extract the error message properly
@@ -852,7 +855,6 @@ export const DataProvider = ({ children }) => {
         payload: { msg: errorMessage },
       });
     }
-    
   };
 
   // const scheduleMail1 = async () => {

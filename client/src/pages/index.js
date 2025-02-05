@@ -11,7 +11,7 @@ import Register from "./Register";
 import ServiceIntimation from "./ServiceIntimation";
 import SingleCard from "./SingleCard";
 import SingleContract from "./SingleContract";
-
+import Dashboard from "./Dashboard";
 export {
   Home,
   SingleContract,
@@ -26,4 +26,5 @@ export {
   Cart,
   FeedbackStats,
   ServiceIntimation,
+  Dashboard,
 };

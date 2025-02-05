@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AddCard, Navbar, Dashboard, Renew, AddContract } from "./components";
+import { AddCard, Navbar, Renew, AddContract } from "./components";
 import {
   Home,
   SingleContract,
@@ -14,6 +14,7 @@ import {
   Cart,
   FeedbackStats,
   ServiceIntimation,
+  Dashboard,
 } from "./pages";
 
 function App() {

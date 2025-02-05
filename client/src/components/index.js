@@ -1,6 +1,5 @@
 import AddContract from "./AddContract";
 import AllCards from "./AllCards";
-import AllContracts from "./AllContracts";
 import ClientAddress from "./ClientAddress";
 import ClientDetails from "./ClientDetails";
 import InputRow from "./InputRow";
@@ -12,7 +11,6 @@ import UpdateCard from "./UpdateCard";
 import Alert from "./Alert";
 import Navbar from "./Navbar";
 import Loading from "./Loading";
-import Dashboard from "./Dashboard";
 import BarChart from "./BarChart";
 import Pagination from "./Pagination";
 import BillToAddress from "./BillToAddress";
@@ -20,9 +18,9 @@ import ShipToAddress from "./ShipToAddress";
 import Renew from "./Renew";
 import VerticalChart from "./VerticalChart";
 import Modal from "./Modal";
-
+import ContractTable from "./ContractTable";
+import SearchContracts from "./SearchContracts";
 export {
-  AllContracts,
   ClientDetails,
   AllCards,
   AddContract,
@@ -36,7 +34,6 @@ export {
   Navbar,
   Loading,
   ShipContacts,
-  Dashboard,
   BarChart,
   Pagination,
   BillToAddress,
@@ -44,4 +41,6 @@ export {
   Renew,
   VerticalChart,
   Modal,
+  ContractTable,
+  SearchContracts,
 };

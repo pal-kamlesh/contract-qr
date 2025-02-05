@@ -27,14 +27,33 @@ const Admin = () => {
     allJobData,
     modal,
     branchReport,
+    adminList,
+    allValues,
   } = useDataContext();
 
-  const { label, value, chemical } = serviceChemicals;
+  const representativeList = [];
+  const contractCodesList = ["Select"];
 
+  if (adminList) {
+    adminList.map(
+      (item) => (
+        item.sales !== undefined && representativeList.push(item.sales),
+        item.contractCode !== undefined &&
+          contractCodesList.push(item.contractCode)
+      )
+    );
+  }
+  const { label, value, chemical } = serviceChemicals;
+  console.log(representativeList);
+  console.log(contractCodesList);
   useEffect(() => {
     fetchAllUsers();
     // eslint-disable-next-line
   }, [del]);
+
+  useEffect(() => {
+    allValues();
+  }, []);
 
   const [showUser, setShowUser] = useState(false);
   const [showComment, setShowComment] = useState(false);
@@ -73,14 +92,14 @@ const Admin = () => {
       addContractCode();
     } else if (serviceChemicals) {
       addServiceChemicals();
-    } 
+    }
     displayAlert();
   };
 
   if (loading) {
     return <Loading />;
   }
-
+  console.log(addCode);
   return (
     <div className="container">
       {showAlert && <Alert />}
