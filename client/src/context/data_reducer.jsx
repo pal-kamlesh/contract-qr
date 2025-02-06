@@ -49,6 +49,8 @@ import {
   SERVICE_INTIMATION_FAIL,
   BRANCH_REPORT,
   BRANCH_REPORT_FAIL,
+  TOGGLE_CODE,
+  CUSTOM_ALERT,
 } from "./action";
 
 import { initialState } from "./data_context";
@@ -68,6 +70,14 @@ const data_reducer = (state, action) => {
         showAlert: false,
         alertText: "",
         alertType: "",
+      };
+    }
+    case CUSTOM_ALERT: {
+      return {
+        ...state,
+        alertText: action.payload,
+        alertType: "danger",
+        showAlert: true,
       };
     }
     case DISPLAY_ALERT: {
@@ -594,6 +604,16 @@ const data_reducer = (state, action) => {
         adminList: action.payload,
       };
     }
+    case TOGGLE_CODE: {
+      console.log("payload");
+      console.log(action.payload);
+      return {
+        ...state,
+        adminList: state.adminList.map((item) =>
+          item._id === action.payload.id ? action.payload.data : item
+        ),
+      };
+    }
 
     case ADD_VALUE: {
       return {
@@ -608,12 +628,12 @@ const data_reducer = (state, action) => {
           value: "",
           chemical: "",
         },
-        alertText: action.payload,
+        alertText: action.payload.msg,
         alertType: "success",
         showAlert: true,
+        adminList: [...state.adminList, action.payload.data],
       };
     }
-
     case JOB_STATS: {
       return {
         ...state,

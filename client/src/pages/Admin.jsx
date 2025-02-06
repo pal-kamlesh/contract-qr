@@ -29,23 +29,27 @@ const Admin = () => {
     branchReport,
     adminList,
     allValues,
+    toggleCode,
   } = useDataContext();
-
+  const [activeSection, setActiveSection] = useState("");
+  const [branch, setBranch] = useState("MUM - 1");
   const representativeList = [];
-  const contractCodesList = ["Select"];
+  const contractCodesList = [];
 
   if (adminList) {
-    adminList.map(
+    adminList?.map(
       (item) => (
         item.sales !== undefined && representativeList.push(item.sales),
         item.contractCode !== undefined &&
-          contractCodesList.push(item.contractCode)
+          contractCodesList.push({
+            name: item.contractCode.name,
+            active: item.contractCode.active,
+            _id: item._id,
+          })
       )
     );
   }
   const { label, value, chemical } = serviceChemicals;
-  console.log(representativeList);
-  console.log(contractCodesList);
   useEffect(() => {
     fetchAllUsers();
     // eslint-disable-next-line
@@ -55,15 +59,9 @@ const Admin = () => {
     allValues();
   }, []);
 
-  const [showUser, setShowUser] = useState(false);
-  const [showComment, setShowComment] = useState(false);
-  const [showSales, setShowSales] = useState(false);
-  const [showService, setShowService] = useState(false);
-  const [showBusiness, setShowBusiness] = useState(false);
-  const [showJobFile, setShowJobFile] = useState(false);
-  const [showBranch, setShowBranch] = useState(false);
-  const [branch, setBranch] = useState("MUM - 1");
-  const [showCode, setShowCode] = useState(false);
+  const handleSectionChange = (section) => {
+    setActiveSection(section);
+  };
 
   const deleteUser = (id) => {
     removeUser(id);
@@ -82,16 +80,24 @@ const Admin = () => {
   };
 
   const saveValues = () => {
-    if (addSale) {
-      addSales();
-    } else if (addBusines) {
-      addBusiness();
-    } else if (addComment) {
-      addComments();
-    } else if (addCode) {
-      addContractCode();
-    } else if (serviceChemicals) {
-      addServiceChemicals();
+    switch (activeSection) {
+      case "sales":
+        addSales();
+        break;
+      case "business":
+        addBusiness();
+        break;
+      case "comment":
+        addComments();
+        break;
+      case "code":
+        addContractCode();
+        break;
+      case "service":
+        addServiceChemicals();
+        break;
+      default:
+        console.warn("No valid section selected.");
     }
     displayAlert();
   };
@@ -99,60 +105,59 @@ const Admin = () => {
   if (loading) {
     return <Loading />;
   }
-  console.log(addCode);
   return (
     <div className="container">
       {showAlert && <Alert />}
       {modal && <Modal />}
       <button
-        onClick={() => setShowUser(!showUser)}
+        onClick={() => handleSectionChange("user")}
         className="btn my-3 me-3 btn-info btn-lg"
       >
-        All Users
+        Show User
       </button>
       <button
-        onClick={() => setShowSales(!showSales)}
+        onClick={() => handleSectionChange("sales")}
         className="btn m-3 btn-info btn-lg"
       >
-        Add Sales Person
+        Add Sales
       </button>
       <button
-        onClick={() => setShowBusiness(!showBusiness)}
+        onClick={() => handleSectionChange("business")}
         className="btn m-3 btn-info btn-lg"
       >
         Add Business
       </button>
       <button
-        onClick={() => setShowService(!showService)}
+        onClick={() => handleSectionChange("service")}
         className="btn m-3 btn-info btn-lg"
       >
         Add Service &amp; Chemical
       </button>
       <button
-        onClick={() => setShowComment(!showComment)}
+        onClick={() => handleSectionChange("comment")}
         className="btn m-3 btn-info btn-lg"
       >
         Add Service Comment
       </button>
       <button
-        onClick={() => setShowJobFile(!showJobFile)}
+        onClick={() => handleSectionChange("jobFile")}
         className="btn my-3 me-3 btn-info btn-lg"
       >
         All Job Report
       </button>
       <button
-        onClick={() => setShowBranch(!showBranch)}
+        onClick={() => handleSectionChange("branch")}
         className="btn my-3 me-3 btn-info btn-lg"
       >
         Branch Report
       </button>
       <button
-        onClick={() => setShowCode(!showCode)}
+        onClick={() => handleSectionChange("code")}
         className="btn my-3 me-3 btn-info btn-lg"
       >
         Add Source Code
       </button>
-      {showUser && (
+      {activeSection === "user" && (
         <table className="table">
           <thead>
             <tr>
@@ -189,27 +194,59 @@ const Admin = () => {
         </table>
       )}
       <div className="row">
-        {showComment && (
+        {activeSection === "comment" && (
           <div className="col-md-5">
             <InputRow label="Comment" name="addComment" value={addComment} />
           </div>
         )}
-        {showSales && (
+        {activeSection === "sales" && (
           <div className="col-md-5">
             <InputRow label="Sales Person" name="addSale" value={addSale} />
           </div>
         )}
-        {showBusiness && (
+        {activeSection === "business" && (
           <div className="col-md-5">
             <InputRow label="Business" name="addBusines" value={addBusines} />
           </div>
         )}
-        {showCode && (
+        {activeSection === "code" && (
           <div className="col-md-5">
-            <InputRow label="Contract Code" name="addCode" value={addCode} />
+            <div className="">
+              <div className="">
+                <InputRow
+                  label="Contract Code"
+                  name="addCode"
+                  value={addCode.name}
+                />
+
+                <div className="mt-3">
+                  <h6 className="text-secondary">Existing Codes</h6>
+                  <ul className="list-group">
+                    {contractCodesList.map((item) => (
+                      <li
+                        key={item._id}
+                        className="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <span>{item.name}</span>
+                        <span
+                          className={`badge cursor-pointer ${
+                            item.active ? "bg-success" : "bg-danger"
+                          }`}
+                          onClick={() => toggleCode(item._id)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          {item.active ? "Active" : "Inactive"}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         )}
-        {showService && (
+
+        {activeSection === "service" && (
           <>
             <div className="col-md-4">
               <InputRow
@@ -240,11 +277,9 @@ const Admin = () => {
             </div>
           </>
         )}
-        {(showComment ||
-          showSales ||
-          showService ||
-          showBusiness ||
-          showCode) && (
+        {["comment", "sales", "business", "code", "service"].includes(
+          activeSection
+        ) && (
           <div className="col-md-1">
             <button onClick={saveValues} className="btn mt-1 btn-info ">
               Save
@@ -252,7 +287,7 @@ const Admin = () => {
           </div>
         )}
       </div>
-      {showJobFile && (
+      {activeSection === "jobFile" && (
         <form className="row" onSubmit={generateFile}>
           <div className="col-md-4">
             <InputRow
@@ -277,7 +312,7 @@ const Admin = () => {
           </div>
         </form>
       )}
-      {showBranch && (
+      {activeSection === "branch" && (
         <form className="row" onSubmit={branchFile}>
           <div className="col-md-3 d-flex">
             <label htmlFor="" className="p-2">

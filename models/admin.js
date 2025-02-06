@@ -15,7 +15,12 @@ const AdminSchema = new mongoose.Schema({
     value: String,
     chemical: String,
   },
-  contractCode: { type: String },
+  contractCode: {
+    name: String,
+    active: {
+      type: Boolean,
+    },
+  },
 });
 
 module.exports = mongoose.model("Admin", AdminSchema);

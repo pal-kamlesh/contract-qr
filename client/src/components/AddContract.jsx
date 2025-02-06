@@ -40,19 +40,24 @@ const AddContract = () => {
     company,
     branch,
     contractCode,
+    customAlert,
   } = useDataContext();
   const { day, time } = preferred;
 
   const representativeList = [];
   const contractCodesList = ["Select"];
-  console.log(representativeList);
-  console.log(contractCodesList);
+
   if (adminList) {
     adminList.map(
       (item) => (
         item.sales !== undefined && representativeList.push(item.sales),
         item.contractCode !== undefined &&
-          contractCodesList.push(item.contractCode)
+          item.contractCode.active &&
+          contractCodesList.push({
+            name: item.contractCode.name,
+            active: item.contractCode.active,
+            _id: item._id,
+          })
       )
     );
   }
@@ -140,9 +145,12 @@ const AddContract = () => {
     }
     // eslint-disable-next-line
   }, [startDate, endContract]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (contractCode === "Select" || contractCode === "") {
+      customAlert("Plese Select Code Value");
+      return;
+    }
     createContract(endDate);
     setSame(false);
     displayAlert();
@@ -260,7 +268,12 @@ const AddContract = () => {
           </div>
           <div className="col-md-4">
             <InputSelect
-              label="Code"
+              label={
+                <>
+                  <span>Code</span>
+                  <span className="text-danger">*</span>
+                </>
+              }
               name="contractCode"
               value={contractCode}
               data={contractCodesList}

@@ -1,6 +1,7 @@
 export const LOADING = "LOADING";
 export const DISPLAY_ALERT = "DISPLAY_ALERT";
 export const CLEAR_ALERT = "CLEAR_ALERT";
+export const CUSTOM_ALERT = "CUSTOM_ALERT";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_FAIL = "REGISTER_FAIL";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
@@ -31,6 +32,7 @@ export const UPDATE_CONTRACT = "UPDATE_CONTRACT";
 export const COPY_CONTRACT = "COPY_CONTRACT";
 export const ALL_VALUES = "ALL_VALUES";
 export const ADD_VALUE = "ADD_VALUE";
+export const TOGGLE_CODE = "TOGGLE_CODE";
 export const DELETE_SERVICE = "DELETE_SERVICE";
 export const SERVICE_REPORT = "SERVICE_REPORT";
 export const CLOSE_MODAL = "CLOSE_MODAL";

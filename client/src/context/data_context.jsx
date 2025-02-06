@@ -54,6 +54,8 @@ import {
   BRANCH_REPORT,
   BRANCH_REPORT_FAIL,
   FAIL_ALERT,
+  TOGGLE_CODE,
+  CUSTOM_ALERT,
 } from "./action";
 
 const DataContext = createContext();
@@ -163,9 +165,7 @@ export const initialState = {
   addComment: "",
   addSale: "",
   addBusines: "",
-  addCode: {
-    name: "",
-  },
+  addCode: "",
   serviceChemicals: {
     label: "",
     value: "",
@@ -189,6 +189,7 @@ export const initialState = {
   contractCode: "",
 };
 
+// eslint-disable-next-line react/prop-types
 export const DataProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -219,6 +220,10 @@ export const DataProvider = ({ children }) => {
 
   const displayAlert = () => {
     dispatch({ type: DISPLAY_ALERT });
+    clearAlert();
+  };
+  const customAlert = (msg) => {
+    dispatch({ type: CUSTOM_ALERT, payload: msg });
     clearAlert();
   };
 
@@ -323,7 +328,10 @@ export const DataProvider = ({ children }) => {
       const res = await authFetch.post("/admin", {
         commentsList: addComment,
       });
-      dispatch({ type: ADD_VALUE, payload: res.data.msg });
+      dispatch({
+        type: ADD_VALUE,
+        payload: { msg: res.data.msg, data: res.data.data },
+      });
     } catch (error) {
       console.log(error);
     }
@@ -335,7 +343,10 @@ export const DataProvider = ({ children }) => {
       const res = await authFetch.post("/admin", {
         sales: addSale,
       });
-      dispatch({ type: ADD_VALUE, payload: res.data.msg });
+      dispatch({
+        type: ADD_VALUE,
+        payload: { msg: res.data.msg, data: res.data.data },
+      });
     } catch (error) {
       console.log(error);
     }
@@ -347,7 +358,10 @@ export const DataProvider = ({ children }) => {
       const res = await authFetch.post("/admin", {
         business: addBusines,
       });
-      dispatch({ type: ADD_VALUE, payload: res.data.msg });
+      dispatch({
+        type: ADD_VALUE,
+        payload: { msg: res.data.msg, data: res.data.data },
+      });
     } catch (error) {
       console.log(error);
     }
@@ -356,10 +370,27 @@ export const DataProvider = ({ children }) => {
   const addContractCode = async () => {
     try {
       const { addCode } = state;
+      const data = {
+        name: addCode,
+        active: true,
+      };
       const res = await authFetch.post("/admin", {
-        contractCode: addCode,
+        contractCode: data,
       });
-      dispatch({ type: ADD_VALUE, payload: res.data.msg });
+      dispatch({
+        type: ADD_VALUE,
+        payload: { msg: res.data.msg, data: res.data.data },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const toggleCode = async (id) => {
+    try {
+      const res = await authFetch.post(`/admin/${id}/code`, {});
+      console.log("This is response");
+      console.log(res);
+      dispatch({ type: TOGGLE_CODE, payload: { id, data: res.data.data } });
     } catch (error) {
       console.log(error);
     }
@@ -487,7 +518,9 @@ export const DataProvider = ({ children }) => {
         type: EDIT_SERVICE,
         payload: { frequency, business, treatmentLocation, _id, area },
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const sameDetails = () => {
@@ -916,6 +949,7 @@ export const DataProvider = ({ children }) => {
     <DataContext.Provider
       value={{
         ...state,
+        customAlert,
         fetchContracts,
         fetchSingleContract,
         fetchSingleCard,
@@ -960,6 +994,7 @@ export const DataProvider = ({ children }) => {
         serviceIntimation,
         setServiceId,
         branchReport,
+        toggleCode,
       }}
     >
       {children}

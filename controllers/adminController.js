@@ -5,8 +5,10 @@ const Service = require("../models/service");
 
 const addValues = async (req, res) => {
   try {
-    await Admin.create(req.body);
-    res.status(201).json({ msg: "Added successfully" });
+    console.log(req.body);
+    const newData = await Admin.create(req.body);
+    console.log(newData);
+    res.status(201).json({ msg: "Added successfully", data: newData });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Server error, try again later" });
@@ -95,10 +97,13 @@ const contractDetails = async (req, res) => {
 const contractServices = async (req, res) => {
   const { search } = req.query;
   try {
-    const contracT = await Contract.findOne({ contractNo: search }).sort("-createdAt").populate("services");
+    const contracT = await Contract.findOne({ contractNo: search })
+      .sort("-createdAt")
+      .populate("services");
     if (!contracT) return res.status(404).json({ msg: "No Contract Found" });
 
-    let billEmail = [], shipEmail = [];
+    let billEmail = [],
+      shipEmail = [];
     if (contracT.billToContact1.email)
       billEmail.push(contracT.billToContact1.email);
     if (contracT.billToContact2.email)
@@ -122,16 +127,18 @@ const contractServices = async (req, res) => {
       shipToEmails: shipEmail,
     };
 
-    const serviceArrays = contracT.services.map(({ _id, service, ...rest }) => ({ _id, service }));
+    const serviceArrays = contracT.services.map(
+      ({ _id, service, ...rest }) => ({ _id, service })
+    );
 
-    const services = serviceArrays.map(obj => {
-      obj.service = obj.service.filter(a => a !== "");
+    const services = serviceArrays.map((obj) => {
+      obj.service = obj.service.filter((a) => a !== "");
       return { ...obj };
     });
 
-    const newServices = services.map(x => (
-      x.service.map(name => ({ name, serviceId: x._id }))
-    ));
+    const newServices = services.map((x) =>
+      x.service.map((name) => ({ name, serviceId: x._id }))
+    );
     const output = newServices.flat(2);
 
     res.status(200).json({ details, services: output });
@@ -170,4 +177,24 @@ const createServiceReport = async (req, res) => {
   }
 };
 
-module.exports = { addValues, allValues, serviceCards, contractDetails, contractServices, createServiceReport };
+const toggleCode = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const code = await Admin.findById(id);
+    code.contractCode.active = !code.contractCode.active;
+    code.save();
+    res.status(200).json({ data: code });
+  } catch (error) {
+    res.status(400).json({ msg: "There is some error" });
+  }
+};
+
+module.exports = {
+  addValues,
+  allValues,
+  serviceCards,
+  contractDetails,
+  contractServices,
+  createServiceReport,
+  toggleCode,
+};

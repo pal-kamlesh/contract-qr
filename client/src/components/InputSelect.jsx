@@ -1,8 +1,9 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import { useDataContext } from "../context/data_context";
 
 const InputSelect = ({ label, data, name, value, id, width, w }) => {
   const { handleChange } = useDataContext();
+
   return (
     <div className="row mt-2">
       <div className={w ? "col-md-5" : "col-md-4"}>
@@ -18,10 +19,14 @@ const InputSelect = ({ label, data, name, value, id, width, w }) => {
           onChange={handleChange}
           style={{ width: width }}
         >
-          {data.map((data) => {
+          {data.map((item) => {
+            // Check if item is an object or a simple value
+            const optionValue = typeof item === "object" ? item.name : item;
+            const optionLabel = typeof item === "object" ? item.name : item;
+
             return (
-              <option value={data} key={data}>
-                {data}
+              <option value={optionValue} key={optionValue}>
+                {optionLabel}
               </option>
             );
           })}
