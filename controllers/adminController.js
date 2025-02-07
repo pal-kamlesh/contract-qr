@@ -5,9 +5,7 @@ const Service = require("../models/service");
 
 const addValues = async (req, res) => {
   try {
-    console.log(req.body);
     const newData = await Admin.create(req.body);
-    console.log(newData);
     res.status(201).json({ msg: "Added successfully", data: newData });
   } catch (error) {
     console.log(error);
