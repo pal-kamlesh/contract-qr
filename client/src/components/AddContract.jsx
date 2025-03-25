@@ -171,7 +171,6 @@ const AddContract = () => {
     }
     // eslint-disable-next-line
   }, [contractCreated]);
-
   return (
     <div className="container">
       <form onSubmit={handleSubmit}>

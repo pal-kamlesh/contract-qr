@@ -1577,7 +1577,6 @@ const contractCodeReport = async (req, res) => {
       let sendSmtpEmail = new Brevo.SendSmtpEmail();
 
       let subject = "Contract Codes Service Report";
-      
 
       sendSmtpEmail.subject = `Auto Generated ${subject} Of ${monthName}`;
       sendSmtpEmail.htmlContent = `<html><body><div>Hi Team,<br><br>Please find the attachments of all ${subject} of ${monthName}.<br><br>Thanks & Regards<br>Epcorn Team</div></body></html>`;

@@ -297,42 +297,6 @@ const sendMails = async (req, res, next) => {
   }
 };
 
-const reop = async () => {
-  if (service.contract.feedbackMail) {
-    const feedbackPresent = await Feedback.findOne({
-      contract: emailSub,
-    }).sort("-createdAt");
-    if (!feedbackPresent) {
-      await sendFeedbackMail(emails);
-      return;
-    }
-
-    const feedbackMonth = new Date(feedbackPresent.createdAt).getMonth();
-    if (date.getMonth() === feedbackMonth.getMonth())
-      return console.log("Already have feedback");
-  }
-
-  //grouping by pestService array
-  [
-    {
-      $unwind: {
-        path: "$pestService",
-      },
-    },
-    {
-      $group: {
-        _id: "$pestService",
-        avgRating: {
-          $avg: "$rating",
-        },
-        numOfRating: {
-          $sum: 1,
-        },
-      },
-    },
-  ];
-};
-
 module.exports = {
   createFeedback,
   scheduleMail,

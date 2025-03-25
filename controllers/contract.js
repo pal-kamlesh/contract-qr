@@ -1,10 +1,11 @@
 const Contract = require("../models/contract");
 const { BadRequestError } = require("../errors");
 const fs = require("fs");
-const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const { Parser } = require("json2csv");
 const moment = require("moment");
+const ExcelJS = require("exceljs");
+const path = require("path");
 
 const getAllContracts = async (req, res) => {
   const { search, searchSD, searchED } = req.query;
@@ -192,6 +193,79 @@ const deleteContract = async (req, res) => {
   }
 };
 
+const testingReportBLR = async (req, res) => {
+  try {
+    // Populate contract -> services -> serviceReports
+    const contracts = await Contract.find({ branch: "BLR - 1" }).populate({
+      path: "services", // Populate the services related to the contract
+      populate: {
+        path: "serviceReports", // Populate the service reports related to each service
+      },
+    });
+    if (!contracts || contracts.length === 0) {
+      return res.status(404).json({ msg: "No contracts found for BLR - 1" });
+    }
+    // Generate Excel file
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Service Reports");
+
+    // Define headers
+    worksheet.columns = [
+      { header: "Contract No", key: "contractNo", width: 15 },
+      { header: "Bill To Name", key: "billToName", width: 20 },
+      { header: "Bill To Address", key: "billToAddress", width: 30 },
+      { header: "Ship To Name", key: "shipToName", width: 20 },
+      { header: "Ship To Address", key: "shipToAddress", width: 30 },
+      { header: "Service Name", key: "serviceName", width: 25 },
+      { header: "Service Frequency", key: "serviceFrequency", width: 15 },
+      { header: "Due Dates", key: "dueDates", width: 25 },
+      { header: "Service Report Date", key: "serviceReportDate", width: 15 },
+    ];
+
+    // Populate rows
+    contracts.forEach((contract) => {
+      contract.services.forEach((service) => {
+        service.serviceReports.forEach((report) => {
+          worksheet.addRow({
+            contractNo: contract?.contractNo,
+            billToName: contract?.billToAddress?.name || "N/A",
+            billToAddress: contract?.billToAddress
+              ? `${contract?.billToAddress?.address1}, ${contract?.billToAddress.city}, ${contract.billToAddress.pincode}`
+              : "N/A",
+            shipToName: contract?.shipToAddress?.name || "N/A",
+            shipToAddress: contract?.shipToAddress
+              ? `${contract.shipToAddress?.address1}, ${contract.shipToAddress.city}, ${contract.shipToAddress.pincode}`
+              : "N/A",
+            serviceName: service?.service.join(", "),
+            serviceFrequency: service?.frequency,
+            dueDates: service?.serviceDue.join(", "),
+            serviceReportDate: report?.serviceDate
+              ? report?.serviceDate
+              : "N/A",
+          });
+        });
+      });
+    });
+
+    // Set response headers for file download
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=Service_Reports.xlsx"
+    );
+
+    // Write Excel file to response
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getAllContracts,
   createContract,
@@ -200,4 +274,5 @@ module.exports = {
   updateContract,
   fileUpload,
   deleteFile,
+  testingReportBLR,
 };
